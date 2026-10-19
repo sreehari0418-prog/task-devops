@@ -8,8 +8,12 @@ on:
     branches: [main]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
 
     steps:
       - name: Checkout repository
@@ -18,11 +22,15 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: ${{ matrix.python-version }}
 
       - name: Check Python syntax
         run: python -m py_compile app.py
 
-      - name: Report success
-        run: echo "Build check passed!"
-
+      - name: Run tests
+        run: |
+          if [ -f test_app.py ]; then
+            python test_app.py
+          else
+            echo "No test_app.py found; syntax check only."
+          fi
