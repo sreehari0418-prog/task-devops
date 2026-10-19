@@ -10,6 +10,7 @@ pipeline {
 
         stage('Build') {
             steps {
+                sh 'python3 -m pip install -r requirements.txt'
                 sh 'python3 -m py_compile app.py'
                 echo 'Build check passed!'
             }
