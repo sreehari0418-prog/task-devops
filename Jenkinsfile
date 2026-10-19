@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -15,9 +16,20 @@ pipeline {
             }
         }
 
-        stage('Test') {
+        stage('Docker Login Test') {
             steps {
-                echo 'Test stage completed!'
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_TOKEN'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_TOKEN" | docker login \
+                            -u "$DOCKER_USER" \
+                            --password-stdin
+                        docker logout
+                    '''
+                }
             }
         }
     }
